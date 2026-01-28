@@ -1,0 +1,32 @@
+spring:
+#  autoconfigure:
+#    exclude:
+#      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+#      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  application:
+    name: link-shortener-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/shortener
+    username: postgres
+    password: "PassWord"
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  server:
+    error:
+      include-message: always
+      include-exception: true
+
+  rateLimit:
+    windowSeconds: 60
+    maxRequests: 10

@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Link Shortener</title>
+    <style>
+        :root{
+            --bg:#0b1220;
+            --card:#0f1a33;
+            --muted:#9fb0d0;
+            --text:#e9f0ff;
+            --line:#223257;
+            --brand:#4f8cff;
+            --brand2:#7c5cff;
+            --danger:#ff5c7a;
+            --ok:#2dd4bf;
+            --shadow: 0 20px 60px rgba(0,0,0,.35);
+            --radius: 16px;
+        }
+        *{ box-sizing:border-box; }
+        body{
+            margin:0;
+            min-height:100vh;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue";
+            background:
+                    radial-gradient(800px 500px at 20% 10%, rgba(79,140,255,.20), transparent 60%),
+                    radial-gradient(800px 500px at 80% 0%, rgba(124,92,255,.18), transparent 60%),
+                    radial-gradient(700px 500px at 60% 90%, rgba(45,212,191,.12), transparent 55%),
+                    var(--bg);
+            color: var(--text);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding: 28px 16px;
+        }
+        .wrap{ width:min(920px, 100%); }
+        .header{
+            display:flex;
+            align-items:flex-end;
+            justify-content:space-between;
+            gap:16px;
+            margin-bottom: 14px;
+        }
+        .title{
+            margin:0;
+            font-size: 28px;
+            letter-spacing:.2px;
+        }
+        .subtitle{
+            margin:6px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height:1.4;
+        }
+        .card{
+            background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+            border: 1px solid rgba(255,255,255,.08);
+            box-shadow: var(--shadow);
+            border-radius: var(--radius);
+            overflow:hidden;
+        }
+        .cardTop{
+            padding: 18px 18px 14px;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+        }
+        .badge{
+            font-size: 12px;
+            color: var(--muted);
+            border: 1px solid rgba(255,255,255,.10);
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(0,0,0,.12);
+            white-space:nowrap;
+        }
+        .content{ padding: 18px; }
+        .grid{
+            display:grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            align-items: end;   /* add this */
+        }
+        @media (max-width: 720px){
+            .grid{ grid-template-columns: 1fr; }
+            .btnRow{ display:grid; grid-template-columns: 1fr; gap:10px; }
+        }
+        label{
+            display:block;
+            margin-bottom: 8px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+        .input{
+            width:100%;
+            padding: 14px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,.10);
+            background: rgba(10,18,35,.55);
+            color: var(--text);
+            outline:none;
+            font-size: 15px;
+        }
+        .input:focus{
+            border-color: rgba(79,140,255,.55);
+            box-shadow: 0 0 0 4px rgba(79,140,255,.12);
+        }
+        .btnRow{ display:flex; gap:10px; justify-content:flex-end; align-items:center; }
+        button{
+            border: 0;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-weight: 600;
+            cursor: pointer;
+            color: white;
+            background: linear-gradient(135deg, var(--brand), var(--brand2));
+            min-width: 170px;
+            position: relative;
+        }
+        button:disabled{
+            cursor:not-allowed;
+            opacity:.7;
+        }
+        .btnSecondary{
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.12);
+            color: var(--text);
+            min-width: 120px;
+        }
+        .btnSecondary:hover{ background: rgba(255,255,255,.12); }
+        .spinner{
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,.25);
+            border-top-color: rgba(255,255,255,.95);
+            animation: spin 0.9s linear infinite;
+            display:inline-block;
+            vertical-align:middle;
+            margin-right: 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .panel{
+            margin-top: 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,.10);
+            background: rgba(10,18,35,.45);
+            padding: 14px;
+            display:none;
+        }
+        .row{
+            display:grid;
+            grid-template-columns: 120px 1fr auto;
+            gap: 10px;
+            align-items:center;
+            padding: 10px 0;
+            border-bottom: 1px dashed rgba(255,255,255,.10);
+        }
+        .row:last-child{ border-bottom:0; padding-bottom:0; }
+        .k{ color: var(--muted); font-size: 13px; }
+        .v a{ color: var(--text); text-decoration: none; }
+        .v a:hover{ text-decoration: underline; }
+        .miniBtn{
+            padding: 8px 10px;
+            min-width: auto;
+            border-radius: 10px;
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.12);
+            color: var(--text);
+            font-weight: 600;
+        }
+        .miniBtn:hover{ background: rgba(255,255,255,.12); }
+        .status{
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 13px;
+            min-height: 18px;
+        }
+        .status.err{ color: var(--danger); }
+        .status.ok{ color: var(--ok); }
+        .footer{
+            margin-top: 12px;
+            color: rgba(159,176,208,.9);
+            font-size: 12px;
+            text-align:center;
+        }
+        code{
+            background: rgba(255,255,255,.08);
+            padding: 2px 6px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,.10);
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="header">
+        <div>
+            <h1 class="title">Link Shortener</h1>
+            <p class="subtitle">Paste a long URL → get an 8‑char short URL. Same long URL returns the same short URL.</p>
+        </div>
+<!--        <div class="badge">Backend: <code>/api/v1/links</code></div>-->
+    </div>
+
+    <div class="card">
+        <div class="cardTop">
+            <div class="badge">Tip: Press Enter to generate</div>
+            <div class="badge">Local: <code>localhost:8080</code></div>
+        </div>
+
+        <div class="content">
+            <div class="grid">
+                <div>
+                    <label for="longUrl">Long URL</label>
+                    <input class="input" id="longUrl" placeholder="https://example.com/very/long/link" />
+                </div>
+
+                <div class="btnRow">
+                    <button id="btn">
+                        <span id="btnIcon" style="display:none" class="spinner"></span>
+                        <span id="btnText">Generate</span>
+                    </button>
+                    <button class="btnSecondary" id="clearBtn" type="button">Clear</button>
+                </div>
+            </div>
+
+            <div class="status" id="status"></div>
+
+            <div class="panel" id="panel">
+                <div class="row">
+                    <div class="k">Short URL</div>
+                    <div class="v"><a id="shortA" href="#" target="_blank" rel="noreferrer"></a></div>
+                    <button class="miniBtn" id="copyShortBtn" type="button">Copy</button>
+                </div>
+                <div class="row">
+                    <div class="k">Long URL</div>
+                    <div class="v"><a id="longA" href="#" target="_blank" rel="noreferrer"></a></div>
+                    <button class="miniBtn" id="copyLongBtn" type="button">Copy</button>
+                </div>
+            </div>
+
+            <div class="footer">Built with Spring Boot + PostgreSQL.</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const $ = (id) => document.getElementById(id);
+
+    const longUrlEl = $("longUrl");
+    const btn = $("btn");
+    const btnIcon = $("btnIcon");
+    const btnText = $("btnText");
+    const clearBtn = $("clearBtn");
+    const statusEl = $("status");
+    const panel = $("panel");
+    const shortA = $("shortA");
+    const longA = $("longA");
+    const copyShortBtn = $("copyShortBtn");
+    const copyLongBtn = $("copyLongBtn");
+
+    let lastShort = "";
+    let lastLong = "";
+
+    function setLoading(on){
+        btn.disabled = on;
+        btnIcon.style.display = on ? "inline-block" : "none";
+        btnText.textContent = on ? "Generating..." : "Generate";
+    }
+    function setStatus(msg, type){
+        statusEl.className = "status" + (type ? (" " + type) : "");
+        statusEl.textContent = msg || "";
+    }
+    function showResult(shortUrl, longUrl){
+        panel.style.display = "block";
+        shortA.textContent = shortUrl;
+        shortA.href = shortUrl;
+        longA.textContent = longUrl;
+        longA.href = longUrl;
+    }
+    async function copyText(text){
+        if (!text) return;
+        if (navigator?.clipboard?.writeText) {
+            await navigator.clipboard.writeText(text);
+            return;
+        }
+        // fallback
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+    }
+
+    async function generate(){
+        const longUrl = longUrlEl.value.trim();
+        panel.style.display = "none";
+        if (!longUrl) { setStatus("Please paste a URL first.", "err"); return; }
+
+        try {
+            setLoading(true);
+            setStatus("", "");
+            const res = await fetch("/api/v1/links", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ longUrl })
+            });
+
+            const data = await res.json().catch(() => null);
+
+            if (!res.ok) {
+                const msg = (data && data.longUrl) ? data.longUrl : ("Error: " + res.status);
+                setStatus(msg, "err");
+
+                return;
+            }
+
+            lastShort = data.shortUrl;
+            lastLong = data.longUrl;
+            showResult(data.shortUrl, data.longUrl);
+            setStatus("Done. Short link generated.", "ok");
+        } catch (e) {
+            setStatus("Network/Server error. Is the backend running on :8080?", "err");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    btn.addEventListener("click", generate);
+    longUrlEl.addEventListener("keydown", (e) => { if (e.key === "Enter") generate(); });
+
+    clearBtn.addEventListener("click", () => {
+        longUrlEl.value = "";
+        panel.style.display = "none";
+        setStatus("", "");
+        longUrlEl.focus();
+    });
+
+    copyShortBtn.addEventListener("click", async () => {
+        try { await copyText(lastShort); setStatus("Copied short URL.", "ok"); } catch { setStatus("Copy failed.", "err"); }
+    });
+    copyLongBtn.addEventListener("click", async () => {
+        try { await copyText(lastLong); setStatus("Copied long URL.", "ok"); } catch { setStatus("Copy failed.", "err"); }
+    });
+</script>
+</body>
+</html>
