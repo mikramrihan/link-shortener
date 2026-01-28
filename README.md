@@ -2,6 +2,9 @@
 
 A URL shortener service built with **Spring Boot**, backed by **PostgreSQL** (persistent storage) and **Redis** (cache + rate limiting).
 
+<img width="1544" height="699" alt="Screenshot 2026-01-28 092406" src="https://github.com/user-attachments/assets/de13a115-51d5-45fa-a12c-b3d743cf7316" />
+
+
 ---
 
 ## What you need (once)
